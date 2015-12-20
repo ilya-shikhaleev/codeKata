@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"study/codeKata/kata2/binchop1"
+	"github.com/ilya-shikhaleev/codeKata/kata2/binchop1"
 )
 
 // Returns the integer index of the target in the array, or -1 if the target is not in the array
