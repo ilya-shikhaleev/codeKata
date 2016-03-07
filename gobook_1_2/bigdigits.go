@@ -1,24 +1,31 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	flag "github.com/ogier/pflag"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
-func main() {
-	if len(os.Args) == 1 {
-		fmt.Printf("Usage: %s <number>\n", filepath.Base(os.Args[0]))
-		os.Exit(0)
+var bar bool
+
+func init() {
+	flag.BoolVarP(&bar, "bar", "b", false, "Show bar lines")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage: %s [options] <number>\n", filepath.Base(os.Args[0]))
+		flag.PrintDefaults()
 	}
+}
 
-	number := os.Args[1]
-	log.Println(number)
-
+func writeDigits(number string, buf io.Writer) (countColumns int) {
+	var line string
 	for row := range bigDigits[0] {
-		line := ""
+		line = ""
 		for _, currChar := range number {
 			digit, err := strconv.Atoi(string(currChar))
 			if err != nil {
@@ -27,7 +34,33 @@ func main() {
 
 			line += bigDigits[digit][row] + " "
 		}
-		fmt.Println(line)
+		line = line[:len(line)-1]
+		fmt.Fprintln(buf, line)
+	}
+	countColumns = len(line)
+
+	return
+}
+
+func main() {
+	flag.Parse()
+
+	writer := bufio.NewWriter(os.Stdout)
+	number := flag.Arg(0)
+
+	if len(number) == 0 {
+		flag.Usage()
+		os.Exit(0)
+	}
+
+	countColumns := writeDigits(number, writer)
+
+	if bar {
+		fmt.Println(strings.Repeat("*", countColumns))
+	}
+	writer.Flush()
+	if bar {
+		fmt.Println(strings.Repeat("*", countColumns))
 	}
 }
 
@@ -65,12 +98,12 @@ var bigDigits = [][]string{
 		" 333 ",
 	},
 	{
-		"4   4",
-		"4   4",
-		"4   4",
-		"44444",
-		"    4",
-		"    4",
+		"4   4 ",
+		"4   4 ",
+		"4   4 ",
+		"444444",
+		"    4 ",
+		"    4 ",
 	},
 	{
 		"55555",
