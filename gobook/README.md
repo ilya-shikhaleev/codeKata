@@ -1,0 +1,1 @@
+My solutions for exercises from Programming in Go (Mark Summerfield)

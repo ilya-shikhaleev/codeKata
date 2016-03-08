@@ -1,0 +1,1 @@
+My solution for exercise 2.5.2 (solving of quadratic equation) from Programming in Go (Mark Summerfield)
