@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Quadratic Equation Solver</title>
+</head>
+<body>
+
+<h1>Quadratic Equation Solver</h1>
+<p>Solves equations of the form ax<sup>2</sup> + bx + c</p>
+
+<form action="/" method="POST">
+  <input title="a" placeholder="a" type="text" name="a" value=""/>
+  <span>x<sup>2</sup>+</span>
+  <input title="b" placeholder="b"  type="text" name="b" value=""/>
+  <span>x+</span>
+  <input title="c" placeholder="c"  type="text" name="c" value=""/>
+  <span>= 0</span>
+  <br/>
+  <br/>
+  <input type="submit" value="Calculate" />
+</form>
+<span class="error">{{.ErrorMessage}}</span>
+<hr />
+<span class="result">{{.Result | unescape}}</span>
+
+</body>
+</html>
