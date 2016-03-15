@@ -1,35 +1,49 @@
 package observer
 
-//Observable subject
-type Observable interface {
-	RegisterObserver(observer Observer)
-	RemoveObserver(observer Observer)
-	NotifyObservers(data interface{})
-}
-
-type Subject struct {
-	observers []Observer
-}
-
-func (this *Subject) RegisterObserver(observer Observer) {
-	this.observers = append(this.observers, observer)
-}
-
-func (this *Subject) RemoveObserver(observer Observer) {
-	for index, currentObserver := range this.observers {
-		if currentObserver == observer {
-			this.observers = append(this.observers[:index], this.observers[index+1:]...)
-		}
-	}
-}
-
-func (this *Subject) NotifyObservers(data interface{}) {
-	for _, observer := range this.observers {
-		observer.Update(data)
-	}
-}
+import (
+	"github.com/ilya-shikhaleev/codeKata/ood/observer/queue"
+)
 
 //Observers
 type Observer interface {
 	Update(data interface{})
+}
+
+type PriorityObserver struct {
+	Observer Observer
+	Priority float64
+}
+
+func (this PriorityObserver) GetValue() interface{} {
+	return this.Observer
+}
+
+func (this PriorityObserver) GetPriority() float64 {
+	return this.Priority
+}
+
+//Observable subject
+type Observable interface {
+	RegisterObserver(observer PriorityObserver)
+	RemoveObserver(observer PriorityObserver)
+	NotifyObservers(data interface{})
+}
+
+type Subject struct {
+	observers queue.PriorityQueue
+}
+
+func (this *Subject) RegisterObserver(observer *PriorityObserver) {
+	this.observers.Push(observer)
+}
+
+func (this *Subject) RemoveObserver(observer *PriorityObserver) {
+	this.observers.Remove(observer)
+}
+
+func (this *Subject) NotifyObservers(data interface{}) {
+	for _, item := range this.observers {
+		observer := item.GetValue().(Observer)
+		observer.Update(data)
+	}
 }
