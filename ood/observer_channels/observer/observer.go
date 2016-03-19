@@ -1,9 +1,5 @@
 package observer
 
-import (
-	"github.com/ilya-shikhaleev/codeKata/ood/observer_channels/queue"
-)
-
 type Event int
 
 type Handler interface {
@@ -28,20 +24,25 @@ func StartSubscribing(inChan chan interface{}, handler Handler) {
 }
 
 type Subject struct {
-	observers queue.PriorityQueue
+	observers []chan interface{}
 }
 
-func (this *Subject) RegisterObserver(inChan chan interface{}, priority float64) {
-	this.observers.Push(inChan, priority)
+func (this *Subject) RegisterObserver(inChan chan interface{}) {
+	this.observers = append(this.observers, inChan)
 }
 
 func (this *Subject) RemoveObserver(inChan chan interface{}) {
-	this.observers.Remove(inChan)
+	var newObservers []chan interface{}
+	for _, ch := range this.observers {
+		if ch != inChan {
+			newObservers = append(newObservers, ch)
+		}
+	}
+	this.observers = newObservers
 }
 
 func (this *Subject) NotifyObservers(data interface{}) {
-	for _, item := range this.observers {
-		inChan := item.Value.(chan interface{})
-		inChan <- data
+	for _, ch := range this.observers {
+		ch <- data
 	}
 }

@@ -2,51 +2,80 @@ package observer
 
 import (
 	"testing"
+	"time"
 )
 
-var countUpdates int
+var resultCh chan bool
 var subject Subject
 
-type MockObserver struct{}
-
-func (this *MockObserver) Update(data interface{}) {
-	countUpdates++
+type MockObserver struct {
+	inChan chan interface{}
 }
 
-type KillSelfObserver struct{}
+func (this *MockObserver) Handle(data interface{}) {
+	resultCh <- true
+}
 
-func (this *KillSelfObserver) Update(data interface{}) {
-	countUpdates++
-	subject.RemoveObserver(this)
+func NewMockObserver() *MockObserver {
+	o := &MockObserver{}
+	o.inChan = make(chan interface{})
+	StartSubscribing(o.inChan, o)
+	return o
+}
+
+type KillSelfObserver struct {
+	inChan chan interface{}
+}
+
+func (this *KillSelfObserver) Handle(data interface{}) {
+	resultCh <- true
+	subject.RemoveObserver(this.inChan)
+}
+
+func NewKillSelfObserver() *KillSelfObserver {
+	o := &KillSelfObserver{}
+	o.inChan = make(chan interface{})
+	StartSubscribing(o.inChan, o)
+	return o
 }
 
 func TestObserver(t *testing.T) {
-	mockObserver := &MockObserver{}
-	subject.RegisterObserver(mockObserver, 1.0)
-	subject.RegisterObserver(mockObserver, 1.0)
-	subject.RegisterObserver(mockObserver, 1.0)
+	resultCh = make(chan bool, 10)
 
-	killSelfObserver := &KillSelfObserver{}
-	subject.RegisterObserver(killSelfObserver, 1.0)
-	subject.RegisterObserver(killSelfObserver, 1.0)
-	subject.RegisterObserver(killSelfObserver, 1.0)
+	mockObserver := NewMockObserver()
+	subject.RegisterObserver(mockObserver.inChan)
+	subject.RegisterObserver(mockObserver.inChan)
+	subject.RegisterObserver(mockObserver.inChan)
 
-	subject.NotifyObservers(nil)
-	expectedCount := 6
-	if countUpdates != expectedCount {
-		t.Errorf("Expected %v observer calls, got %v", expectedCount, countUpdates)
-	}
+	killSelfObserver := NewKillSelfObserver()
+	subject.RegisterObserver(killSelfObserver.inChan)
+	subject.RegisterObserver(killSelfObserver.inChan)
+	subject.RegisterObserver(killSelfObserver.inChan)
 
 	subject.NotifyObservers(nil)
-	expectedCount = 9
-	if countUpdates != expectedCount {
-		t.Errorf("Expected %v observer calls, got %v", expectedCount, countUpdates)
-	}
+	timeout := 100 * time.Millisecond
+	checkResultWithTimeout(6, timeout, t)
 
-	subject.RemoveObserver(mockObserver)
 	subject.NotifyObservers(nil)
-	expectedCount = 11
-	if countUpdates != expectedCount {
-		t.Errorf("Expected %v observer calls, got %v", expectedCount, countUpdates)
+	checkResultWithTimeout(3, timeout, t)
+
+	subject.RemoveObserver(mockObserver.inChan)
+	subject.RegisterObserver(mockObserver.inChan)
+	subject.NotifyObservers(nil)
+	checkResultWithTimeout(1, timeout, t)
+}
+
+func checkResultWithTimeout(expectedCount int, timeout time.Duration, t *testing.T) {
+	timeoutCh := time.After(timeout)
+	for i := 0; i < expectedCount; i++ {
+		select {
+		case <-resultCh:
+			if i == expectedCount {
+				return
+			}
+		case <-timeoutCh:
+			t.Errorf("After timeout got %v handles, expect %v", i, expectedCount)
+			return
+		}
 	}
 }
