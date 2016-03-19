@@ -15,11 +15,11 @@ func main() {
 	sd := weather.NewStatisticsDisplay()
 	defer sd.Close()
 
-	inWd.RegisterObserver(d.InChan)
-	inWd.RegisterObserver(sd.InChan)
+	inWd.RegisterObserver([]string{weather.TEMPERATURE_CHANGED}, d.InChan)
+	inWd.RegisterObserver([]string{weather.TEMPERATURE_CHANGED}, sd.InChan)
 
-	outWd.RegisterObserver(d.InChan)
-	outWd.RegisterObserver(sd.InChan)
+	outWd.RegisterObserver([]string{weather.HUMIDITY_CHANGED}, d.InChan)
+	outWd.RegisterObserver([]string{weather.PRESSURE_CHANGED}, sd.InChan)
 
 	inWd.SetMeasurements(3, 0.7, 760)
 	inWd.SetMeasurements(4, 0.8, 761)
