@@ -9,13 +9,6 @@ type Observer interface {
 	Update(data interface{})
 }
 
-//Observable subject
-type Observable interface {
-	RegisterObserver(observer Observer)
-	RemoveObserver(observer Observer)
-	NotifyObservers(data interface{})
-}
-
 type Subject struct {
 	observers queue.PriorityQueue
 }
