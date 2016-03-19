@@ -5,6 +5,7 @@ import (
 )
 
 type WeatherData struct {
+	location    string
 	temperature float64
 	humidity    float64
 	pressure    float64
@@ -23,8 +24,9 @@ func (this *WeatherData) OnMeasurementChange() {
 	this.NotifyObservers(*this)
 }
 
-func NewWeatherData() *WeatherData {
+func NewWeatherData(location string) *WeatherData {
 	weatherData := &WeatherData{}
+	weatherData.location = location
 	weatherData.temperature = 0
 	weatherData.humidity = 0
 	weatherData.pressure = 760

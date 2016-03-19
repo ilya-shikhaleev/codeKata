@@ -6,21 +6,26 @@ import (
 
 func main() {
 	//Create subject
-	weatherData := weather.NewWeatherData()
+	inWeatherData := weather.NewWeatherData("in")
+	outWeatherData := weather.NewWeatherData("out")
 
 	//Create and register first observer
 	statisticsDisplay := weather.NewStatisticsDisplay()
-	weatherData.RegisterObserver(statisticsDisplay, 1.0)
+	inWeatherData.RegisterObserver(statisticsDisplay, 1.0)
+	outWeatherData.RegisterObserver(statisticsDisplay, 2.0)
 
 	//Create and register second observer
 	display := &weather.Display{}
-	weatherData.RegisterObserver(display, 2.0)
+	inWeatherData.RegisterObserver(display, 2.0)
+	outWeatherData.RegisterObserver(display, 1.0)
 
-	weatherData.SetMeasurements(3, 0.7, 760)
-	weatherData.SetMeasurements(4, 0.8, 761)
+	inWeatherData.SetMeasurements(3, 0.7, 760)
+	inWeatherData.SetMeasurements(4, 0.8, 761)
 
-	weatherData.RemoveObserver(display)
+	inWeatherData.RemoveObserver(display)
 
-	weatherData.SetMeasurements(10, 0.8, 761)
-	weatherData.SetMeasurements(-10, 0.8, 761)
+	inWeatherData.SetMeasurements(10, 0.8, 761)
+	inWeatherData.SetMeasurements(-10, 0.8, 761)
+
+	outWeatherData.SetMeasurements(23, 10, 700)
 }

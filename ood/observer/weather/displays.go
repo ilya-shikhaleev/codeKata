@@ -7,13 +7,16 @@ import (
 	"strings"
 )
 
+const DELIMITER_LINE_LENGHT = 21
+
 type Display struct{}
 
 func (this Display) Update(data interface{}) {
 	weatherData, ok := data.(WeatherData)
 	if ok {
-		fmt.Printf("Current Temperature: %v\nCurrent Humidity: %v\nCurrent Pressure: %v\n", weatherData.temperature, weatherData.humidity, weatherData.pressure)
-		fmt.Println(strings.Repeat("-", 21))
+		fmt.Printf("Location: %s measurements:\nCurrent Temperature: %v\nCurrent Humidity: %v\nCurrent Pressure: %v\n",
+			weatherData.location, weatherData.temperature, weatherData.humidity, weatherData.pressure)
+		fmt.Println(strings.Repeat("-", DELIMITER_LINE_LENGHT))
 	} else {
 		fmt.Fprintf(os.Stderr, "%T is not WeatherData (Display::Update)\n", data)
 	}
@@ -39,7 +42,7 @@ func (this *StatisticsObject) updateStatistics(weatherData WeatherData) {
 
 	meanValue := this.accumulativeValue / this.countMeasurements
 	fmt.Printf("Min %s: %v\nMax %s: %v\nMean %s: %v\n", this.statisticsName, this.minValue, this.statisticsName, this.maxValue, this.statisticsName, meanValue)
-	fmt.Println(strings.Repeat("*", 21))
+	fmt.Println(strings.Repeat("*", DELIMITER_LINE_LENGHT))
 }
 
 type StatisticsDisplay struct {
@@ -51,10 +54,11 @@ type StatisticsDisplay struct {
 func (this *StatisticsDisplay) Update(data interface{}) {
 	weatherData, ok := data.(WeatherData)
 	if ok {
+		fmt.Printf("Location %v statistics:\n", weatherData.location)
 		this.temperatureStatisticsObject.updateStatistics(weatherData)
 		this.humidityStatisticsObject.updateStatistics(weatherData)
 		this.pressureStatisticsObject.updateStatistics(weatherData)
-		fmt.Println(strings.Repeat("-", 21))
+		fmt.Println(strings.Repeat("-", DELIMITER_LINE_LENGHT))
 	} else {
 		fmt.Fprintf(os.Stderr, "%T is not WeatherData (StatisticsDisplay::Update)\n", data)
 	}
