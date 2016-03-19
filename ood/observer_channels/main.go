@@ -15,11 +15,11 @@ func main() {
 	sd := weather.NewStatisticsDisplay()
 	defer sd.Close()
 
-	inWd.RegisterObserver(d.InChan, 2.0)
-	inWd.RegisterObserver(sd.InChan, 1.0)
+	inWd.RegisterObserver(d.InChan)
+	inWd.RegisterObserver(sd.InChan)
 
-	outWd.RegisterObserver(d.InChan, 1.0)
-	outWd.RegisterObserver(sd.InChan, 2.0)
+	outWd.RegisterObserver(d.InChan)
+	outWd.RegisterObserver(sd.InChan)
 
 	inWd.SetMeasurements(3, 0.7, 760)
 	inWd.SetMeasurements(4, 0.8, 761)

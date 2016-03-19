@@ -17,10 +17,9 @@ type Display struct {
 func (this Display) Handle(data interface{}) {
 	weatherData, ok := data.(WeatherData)
 	if ok {
-		fmt.Println("Display ", weatherData.location)
-		//fmt.Printf("Location: %s measurements:\nCurrent Temperature: %v\nCurrent Humidity: %v\nCurrent Pressure: %v\n",
-		//	weatherData.location, weatherData.temperature, weatherData.humidity, weatherData.pressure)
-		//fmt.Println(strings.Repeat("-", DELIMITER_LINE_LENGTH))
+		fmt.Printf("Location: %s measurements:\nCurrent Temperature: %v\nCurrent Humidity: %v\nCurrent Pressure: %v\n",
+			weatherData.location, weatherData.temperature, weatherData.humidity, weatherData.pressure)
+		fmt.Println(strings.Repeat("-", DELIMITER_LINE_LENGTH))
 	} else {
 		fmt.Fprintf(os.Stderr, "%T is not WeatherData (Display::Update)\n", data)
 	}
@@ -72,11 +71,10 @@ type StatisticsDisplay struct {
 func (this *StatisticsDisplay) Handle(data interface{}) {
 	weatherData, ok := data.(WeatherData)
 	if ok {
-		fmt.Printf("Location %v statistics:\n", weatherData.location)
-		//this.temperatureStatisticsObject.updateStatistics(weatherData)
-		//this.humidityStatisticsObject.updateStatistics(weatherData)
-		//this.pressureStatisticsObject.updateStatistics(weatherData)
-		//fmt.Println(strings.Repeat("-", DELIMITER_LINE_LENGTH))
+		this.temperatureStatisticsObject.updateStatistics(weatherData)
+		this.humidityStatisticsObject.updateStatistics(weatherData)
+		this.pressureStatisticsObject.updateStatistics(weatherData)
+		fmt.Println(strings.Repeat("-", DELIMITER_LINE_LENGTH))
 	} else {
 		fmt.Fprintf(os.Stderr, "%T is not WeatherData (StatisticsDisplay::Update)\n", data)
 	}
