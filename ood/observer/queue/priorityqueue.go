@@ -1,42 +1,56 @@
 package queue
 
-type QueueItem interface {
-	GetValue() interface{}
-	GetPriority() float64
+import (
+	"bytes"
+	"fmt"
+)
+
+type QueueItem struct {
+	Value    interface{}
+	Priority float64
 }
 
-type PriorityQueue []QueueItem
+type PriorityQueue []*QueueItem
 
-func (this *PriorityQueue) Push(item QueueItem) {
-	var result PriorityQueue
+func (this *PriorityQueue) Push(value interface{}, priority float64) {
 	copy := *this
-	var inserted bool
+	item := &QueueItem{value, priority}
+	index := this.findIndexForInsert(priority)
 
-	for index := 0; index < len(copy); index++ {
-		currentItem := copy[index]
-		if !inserted && currentItem.GetPriority() < item.GetPriority() {
-			result = append(result, item)
-			inserted = true
-		}
-		result = append(result, currentItem)
-	}
-	if !inserted {
-		result = append(result, item)
-	}
-
-	*this = result
+	*this = append(copy[:index], append(PriorityQueue{item}, copy[index:]...)...)
 }
 
-func (this *PriorityQueue) Remove(item QueueItem) {
-	var result PriorityQueue
-	copy := *this
+//Removes first found item.
+func (this *PriorityQueue) Remove(value interface{}) {
+	index := this.firstPosition(value)
+	if index >= 0 {
+		copy := *this
+		*this = append(copy[:index], copy[index+1:]...)
+	}
+}
 
-	for index := 0; index < len(*this); index++ {
-		currentItem := copy[index]
-		if currentItem != item {
-			result = append(result, currentItem)
+func (this PriorityQueue) String() string {
+	var buffer bytes.Buffer
+	for _, item := range this {
+		buffer.WriteString(fmt.Sprintf("%v|", item.Value))
+	}
+	return buffer.String()
+}
+
+func (this PriorityQueue) findIndexForInsert(priority float64) int {
+	for index, item := range this {
+		if item.Priority < priority {
+			return index
 		}
 	}
+	return len(this)
+}
 
-	*this = result
+func (this PriorityQueue) firstPosition(value interface{}) int {
+	for index, item := range this {
+		if item.Value == value {
+			return index
+		}
+	}
+	return -1
 }

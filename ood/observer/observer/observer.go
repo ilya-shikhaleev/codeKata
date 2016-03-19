@@ -9,23 +9,10 @@ type Observer interface {
 	Update(data interface{})
 }
 
-type PriorityObserver struct {
-	Observer Observer
-	Priority float64
-}
-
-func (this PriorityObserver) GetValue() interface{} {
-	return this.Observer
-}
-
-func (this PriorityObserver) GetPriority() float64 {
-	return this.Priority
-}
-
 //Observable subject
 type Observable interface {
-	RegisterObserver(observer PriorityObserver)
-	RemoveObserver(observer PriorityObserver)
+	RegisterObserver(observer Observer)
+	RemoveObserver(observer Observer)
 	NotifyObservers(data interface{})
 }
 
@@ -33,17 +20,17 @@ type Subject struct {
 	observers queue.PriorityQueue
 }
 
-func (this *Subject) RegisterObserver(observer *PriorityObserver) {
-	this.observers.Push(observer)
+func (this *Subject) RegisterObserver(observer Observer, priority float64) {
+	this.observers.Push(observer, priority)
 }
 
-func (this *Subject) RemoveObserver(observer *PriorityObserver) {
+func (this *Subject) RemoveObserver(observer Observer) {
 	this.observers.Remove(observer)
 }
 
 func (this *Subject) NotifyObservers(data interface{}) {
 	for _, item := range this.observers {
-		observer := item.GetValue().(Observer)
+		observer := item.Value.(Observer)
 		observer.Update(data)
 	}
 }
