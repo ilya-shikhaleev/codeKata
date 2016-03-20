@@ -1,7 +1,7 @@
 package battle
 
 type Clothes struct {
-	PlayerDecorator
+	CharacterDecorator
 }
 
 type Panties struct {
@@ -9,13 +9,13 @@ type Panties struct {
 }
 
 func (this Panties) Damage() float64 {
-	return this.p.Damage() + 2
+	return this.c.Damage() + 2
 }
 
-func AddPanties(p Character) *Panties {
-	c := &Panties{}
-	c.p = p
-	return c
+func AddPanties(c Character) *Panties {
+	p := &Panties{}
+	p.c = c
+	return p
 }
 
 type Cap struct {
@@ -23,13 +23,13 @@ type Cap struct {
 }
 
 func (this Cap) Damage() float64 {
-	return this.p.Damage() + 1
+	return this.c.Damage() + 1
 }
 
-func AddCap(p Character) *Cap {
-	c := &Cap{}
-	c.p = p
-	return c
+func AddCap(c Character) *Cap {
+	cup := &Cap{}
+	cup.c = c
+	return cup
 }
 
 type Sneakers struct {
@@ -37,13 +37,13 @@ type Sneakers struct {
 }
 
 func (this Sneakers) Damage() float64 {
-	return this.p.Damage() + 3
+	return this.c.Damage() + 3
 }
 
-func AddSneakers(p Character) *Sneakers {
-	c := &Sneakers{}
-	c.p = p
-	return c
+func AddSneakers(c Character) *Sneakers {
+	s := &Sneakers{}
+	s.c = c
+	return s
 }
 
 type Slippers struct {
@@ -51,13 +51,13 @@ type Slippers struct {
 }
 
 func (this Slippers) Damage() float64 {
-	return this.p.Damage() + 0.5
+	return this.c.Damage() + 0.5
 }
 
-func AddSlippers(p Character) *Slippers {
-	c := &Slippers{}
-	c.p = p
-	return c
+func AddSlippers(c Character) *Slippers {
+	s := &Slippers{}
+	s.c = c
+	return s
 }
 
 type Sword struct {
@@ -65,13 +65,13 @@ type Sword struct {
 }
 
 func (this Sword) Damage() float64 {
-	return this.p.Damage() + 5
+	return this.c.Damage() + 5
 }
 
-func AddSword(p Character) *Sword {
-	c := &Sword{}
-	c.p = p
-	return c
+func AddSword(c Character) *Sword {
+	s := &Sword{}
+	s.c = c
+	return s
 }
 
 type Shield struct {
@@ -79,11 +79,11 @@ type Shield struct {
 }
 
 func (this Shield) Damage() float64 {
-	return this.p.Damage() + 5
+	return this.c.Damage() + 5
 }
 
-func AddShield(p Character) *Shield {
-	c := &Shield{}
-	c.p = p
-	return c
+func AddShield(c Character) *Shield {
+	s := &Shield{}
+	s.c = c
+	return s
 }

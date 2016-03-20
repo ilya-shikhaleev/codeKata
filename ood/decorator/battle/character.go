@@ -106,26 +106,26 @@ func NewWizard(name string, g Gender) *Wizard {
 	return a
 }
 
-type PlayerDecorator struct {
-	p Character
+type CharacterDecorator struct {
+	c Character
 }
 
-func (this PlayerDecorator) Fight(hero, monster Damager) bool {
-	return this.p.Fight(hero, monster)
+func (this CharacterDecorator) Fight(hero, monster Damager) bool {
+	return this.c.Fight(hero, monster)
 }
 
-func (this *PlayerDecorator) LevelUp() {
-	this.p.LevelUp()
+func (this *CharacterDecorator) LevelUp() {
+	this.c.LevelUp()
 }
 
-func (this *PlayerDecorator) LevelDown() {
-	this.p.LevelDown()
+func (this *CharacterDecorator) LevelDown() {
+	this.c.LevelDown()
 }
 
-func (this PlayerDecorator) Name() string {
-	return this.p.Name()
+func (this CharacterDecorator) Name() string {
+	return this.c.Name()
 }
 
-func (this PlayerDecorator) Gender() Gender {
-	return this.p.Gender()
+func (this CharacterDecorator) Gender() Gender {
+	return this.c.Gender()
 }

@@ -1,7 +1,7 @@
 package battle
 
 type Curse struct {
-	PlayerDecorator
+	CharacterDecorator
 }
 
 type GenderCurse struct {
@@ -9,16 +9,16 @@ type GenderCurse struct {
 }
 
 func (this GenderCurse) Damage() float64 {
-	if this.p.Gender() == MALE {
-		return this.p.Damage()
+	if this.c.Gender() == MALE {
+		return this.c.Damage()
 	}
-	return this.p.Damage() / 2
+	return this.c.Damage() / 2
 }
 
-func ExecrateGenderCurse(p Character) *GenderCurse {
-	c := &GenderCurse{}
-	c.p = p
-	return c
+func ExecrateGenderCurse(c Character) *GenderCurse {
+	curse := &GenderCurse{}
+	curse.c = c
+	return curse
 }
 
 type LowDamageCurse struct {
@@ -26,13 +26,13 @@ type LowDamageCurse struct {
 }
 
 func (this LowDamageCurse) Damage() float64 {
-	return this.p.Damage() * 2 / 3
+	return this.c.Damage() * 2 / 3
 }
 
-func ExecrateLowDamageCurse(p Character) *LowDamageCurse {
-	c := &LowDamageCurse{}
-	c.p = p
-	return c
+func ExecrateLowDamageCurse(c Character) *LowDamageCurse {
+	curse := &LowDamageCurse{}
+	curse.c = c
+	return curse
 }
 
 type LostLevelCurse struct {
@@ -40,12 +40,12 @@ type LostLevelCurse struct {
 }
 
 func (this LostLevelCurse) Damage() float64 {
-	return this.p.Damage()
+	return this.c.Damage()
 }
 
-func ExecrateLostLevelCurse(p Character) *LostLevelCurse {
-	c := &LostLevelCurse{}
-	p.LevelDown()
-	c.p = p
-	return c
+func ExecrateLostLevelCurse(c Character) *LostLevelCurse {
+	curse := &LostLevelCurse{}
+	c.LevelDown()
+	curse.c = c
+	return curse
 }
