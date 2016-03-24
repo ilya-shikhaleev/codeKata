@@ -37,6 +37,16 @@ func (this PriorityQueue) String() string {
 	return buffer.String()
 }
 
+func (this *PriorityQueue) Copy() *PriorityQueue {
+	var copy = new(PriorityQueue)
+	
+	values := *this
+	for _, item := range values {
+		copy.Push(item.Value, item.Priority)
+	}
+	return copy
+}
+
 func (this PriorityQueue) findIndexForInsert(priority float64) int {
 	for index, item := range this {
 		if item.Priority < priority {
