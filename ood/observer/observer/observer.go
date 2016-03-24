@@ -22,7 +22,8 @@ func (this *Subject) RemoveObserver(observer Observer) {
 }
 
 func (this *Subject) NotifyObservers(data interface{}) {
-	for _, item := range this.observers {
+	copyObservers := this.observers.Copy()
+	for _, item := range *copyObservers{
 		observer := item.Value.(Observer)
 		observer.Update(data)
 	}
