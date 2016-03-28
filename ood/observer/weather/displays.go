@@ -30,15 +30,15 @@ type StatisticsObject struct {
 	countMeasurements float64
 }
 
-func (this *StatisticsObject) updateStatistics(weatherData WeatherData) {
-	if this.minValue > weatherData.temperature {
-		this.minValue = weatherData.temperature
+func (this *StatisticsObject) updateStatistics(value float64) {
+	if this.minValue > value {
+		this.minValue = value
 	}
-	if this.maxValue < weatherData.temperature {
-		this.maxValue = weatherData.temperature
+	if this.maxValue < value {
+		this.maxValue = value
 	}
 	this.countMeasurements++
-	this.accumulativeValue += weatherData.temperature
+	this.accumulativeValue += value
 
 	meanValue := this.accumulativeValue / this.countMeasurements
 	fmt.Printf("Min %s: %v\nMax %s: %v\nMean %s: %v\n", this.statisticsName, this.minValue, this.statisticsName, this.maxValue, this.statisticsName, meanValue)
@@ -55,9 +55,9 @@ func (this *StatisticsDisplay) Update(data interface{}) {
 	weatherData, ok := data.(WeatherData)
 	if ok {
 		fmt.Printf("Location %v statistics:\n", weatherData.location)
-		this.temperatureStatisticsObject.updateStatistics(weatherData)
-		this.humidityStatisticsObject.updateStatistics(weatherData)
-		this.pressureStatisticsObject.updateStatistics(weatherData)
+		this.temperatureStatisticsObject.updateStatistics(weatherData.temperature)
+		this.humidityStatisticsObject.updateStatistics(weatherData.humidity)
+		this.pressureStatisticsObject.updateStatistics(weatherData.pressure)
 		fmt.Println(strings.Repeat("-", DELIMITER_LINE_LENGTH))
 	} else {
 		fmt.Fprintf(os.Stderr, "%T is not WeatherData (StatisticsDisplay::Update)\n", data)
