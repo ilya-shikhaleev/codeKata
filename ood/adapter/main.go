@@ -41,7 +41,16 @@ func paintPictureOnModernGraphicsRenderer() {
 	paintPicture(painter)
 }
 
+func paintPictureOnModernGraphicsEmbeddedRenderer() {
+	canvasAdapter := modern_graphics_lib.NewModernGraphicsRendererEmbeddedAdapter(os.Stdout)
+	defer canvasAdapter.Close()
+
+	painter := shape_drawing_lib.NewCanvasPainter(canvasAdapter)
+	paintPicture(painter)
+}
+
 func main() {
 	paintPictureOnCanvas()
 	paintPictureOnModernGraphicsRenderer()
+	paintPictureOnModernGraphicsEmbeddedRenderer()
 }
