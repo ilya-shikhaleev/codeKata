@@ -33,11 +33,9 @@ func (self *ModernGraphicsRenderer) DrawLine(start, end Point, color RGBAColor) 
 	if !self.drawing {
 		return fmt.Errorf("DrawLine is allowed between BeginDraw()/EndDraw() only")
 	}
-	str := fmt.Sprintf(
-		`<line fromX="%v" fromY="%v" toX="%v" toY="%v">\n
-  <color r="%.2f" g="%.2f" b="%.2f" a="%.2f"
-</line>%v`, start.x, start.y, end.x, end.y, color.r, color.g, color.b, color.a, "\n")
-	buffer := bytes.NewBufferString(str)
+	buffer := bytes.NewBufferString(fmt.Sprintf("<line fromX=\"%v\" fromY=\"%v\" toX=\"%v\" toY=\"%v\">\n", start.x, start.y, end.x, end.y))
+	buffer.WriteString(fmt.Sprintf("  <color r=\"%.2f\" g=\"%.2f\" b=\"%.2f\" a=\"%.2f>\n", color.r, color.g, color.b, color.a))
+	buffer.WriteString(fmt.Sprintf("</line>\n"))
 	buffer.WriteTo(self.out)
 	self.drawing = true
 	return nil

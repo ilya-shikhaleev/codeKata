@@ -26,14 +26,14 @@ func (self *Triangle) Draw(canvas graphics_lib.ICanvas) {
 }
 
 func NewTriangle(p1, p2, p3 *Point, color uint32) *Triangle {
-	triangle := &Triangle{p1, p2, p3, color}
-	return triangle
+	return &Triangle{p1, p2, p3, color}
 }
 
 type Rectangle struct {
-	leftTop       *Point
-	width, height int
-	color         uint32
+	leftTop *Point
+	width   int
+	height  int
+	color   uint32
 }
 
 func (self *Rectangle) Draw(canvas graphics_lib.ICanvas) {
@@ -46,8 +46,7 @@ func (self *Rectangle) Draw(canvas graphics_lib.ICanvas) {
 }
 
 func NewRectangle(leftTop *Point, width, height int, color uint32) *Rectangle {
-	rectangle := &Rectangle{leftTop, width, height, color}
-	return rectangle
+	return &Rectangle{leftTop, width, height, color}
 }
 
 type CanvasPainter struct {
@@ -59,6 +58,5 @@ func (self *CanvasPainter) Draw(drawable ICanvasDrawable) {
 }
 
 func NewCanvasPainter(canvas graphics_lib.ICanvas) *CanvasPainter {
-	canvasPainter := &CanvasPainter{canvas}
-	return canvasPainter
+	return &CanvasPainter{canvas}
 }
