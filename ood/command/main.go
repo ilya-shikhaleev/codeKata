@@ -6,6 +6,7 @@ import (
 	"github.com/ilya-shikhaleev/codeKata/ood/command/document"
 	"io"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -98,6 +99,18 @@ type ShowListCommand struct {
 func (c *ShowListCommand) Execute(input string) {
 	fmt.Println(strings.Repeat("-", 20))
 	fmt.Println(c.d.Title())
+
+	items := c.d.Items()
+	for currentItem := items.Front(); currentItem != nil; currentItem = currentItem.Next() {
+		item := currentItem.Value.(document.DocumentItem)
+		if item.Image() != nil {
+			fmt.Println("Image")
+		}
+		if item.Paragraph() != nil {
+			fmt.Println("<p>", item.Paragraph().Text(), "</p>")
+		}
+	}
+
 	fmt.Println(strings.Repeat("-", 20))
 }
 
@@ -133,6 +146,30 @@ func (c *SetTitleCommand) Execute(input string) {
 	c.d.SetTitle(input)
 }
 
+type InsertParagraphCommand struct {
+	d *document.Document
+}
+
+func (c *InsertParagraphCommand) Execute(input string) {
+	params := strings.SplitN(input, " ", 2)
+	if len(params) != 2 {
+		fmt.Println("Wrong command")
+		return
+	}
+	var position int
+	if params[0] == "end" {
+		position = document.END_POSITION
+	} else {
+		i, err := strconv.Atoi(params[0])
+		if err != nil || i < 0 || i > c.d.ItemsCount() {
+			fmt.Println("Bad position")
+			return
+		}
+		position = i
+	}
+	c.d.InsertParagraph(params[1], position)
+}
+
 func main() {
 	d := document.NewDocument()
 	menu := NewMenu()
@@ -148,7 +185,9 @@ func main() {
 	redoCommand := &RedoCommand{d}
 	menu.AddItem("redo", "Redo undone command", redoCommand.Execute)
 	setTitleCommand := &SetTitleCommand{d}
-	menu.AddItem("setTitle", "Changes title. Args: <new title>", setTitleCommand.Execute)
+	menu.AddItem("setTitle", "Changes title. Args: <заголовок документа>", setTitleCommand.Execute)
+	insertParagraphCommand := &InsertParagraphCommand{d}
+	menu.AddItem("insertParagraph", "InsertParagraph <позиция>|end <текст параграфа>", insertParagraphCommand.Execute)
 
 	menu.executeCommand("help")
 	menu.Run(bufio.NewReader(os.Stdin))

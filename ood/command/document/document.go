@@ -1,23 +1,42 @@
 package document
 
-import "github.com/ilya-shikhaleev/codeKata/ood/command/command"
+import (
+	"container/list"
+	"fmt"
+	"github.com/ilya-shikhaleev/codeKata/ood/command/command"
+)
 
 type Document struct {
 	title   string
 	history History
+	items   *list.List
 }
 
 func (self *Document) InsertParagraph(text string, position int) {
+	item := DocumentItem{
+		image: nil,
+		paragraph: &Paragraph{
+			text: text,
+		},
+	}
+	command := NewInsertDocumentItemCommand(self.items, item, position)
+	self.history.AddAndExecuteCommand(command)
 }
 
 func (self *Document) InsertImage(path string, width, height int) {
 }
 
 func (self *Document) ItemsCount() int {
-	return 0
+	return self.items.Len()
 }
 
-func (self *Document) Item() {
+func (self *Document) Item(position int) (DocumentItem, error) {
+	item, err := GetItemAtPosition(*self.items, position)
+	return item.Value.(DocumentItem), err
+}
+
+func (self *Document) Items() list.List {
+	return *self.items
 }
 
 func (self *Document) DeleteItem() {
@@ -50,5 +69,18 @@ func (self *Document) Save() {
 }
 
 func NewDocument() *Document {
-	return &Document{}
+	d := &Document{}
+	d.items = list.New()
+	return d
+}
+
+func GetItemAtPosition(items list.List, position int) (*list.Element, error) {
+	i := 0
+	for currentItem := items.Front(); currentItem != nil; currentItem = currentItem.Next() {
+		if i == position {
+			return currentItem, nil
+		}
+		i++
+	}
+	return nil, fmt.Errorf("Not found item")
 }

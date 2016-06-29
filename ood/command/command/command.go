@@ -10,21 +10,21 @@ type Command interface {
 }
 
 type NoRepeatCommand struct {
-	c          Command
-	isExecuted bool
+	C          Command
+	IsExecuted bool
 }
 
 func (self *NoRepeatCommand) Execute() {
-	if !self.isExecuted {
-		self.c.Execute()
-		self.isExecuted = true
+	if !self.IsExecuted {
+		self.C.Execute()
+		self.IsExecuted = true
 	}
 }
 
 func (self *NoRepeatCommand) Unexecute() {
-	if self.isExecuted {
-		self.c.Unexecute()
-		self.isExecuted = false
+	if self.IsExecuted {
+		self.C.Unexecute()
+		self.IsExecuted = false
 	}
 }
 
