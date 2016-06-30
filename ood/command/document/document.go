@@ -23,6 +23,17 @@ func (self *Document) InsertParagraph(text string, position int) {
 	self.history.AddAndExecuteCommand(command)
 }
 
+func (self *Document) ReplaceParagraph(text string, position int) {
+	item := DocumentItem{
+		image: nil,
+		paragraph: &Paragraph{
+			text: text,
+		},
+	}
+	command := NewReplaceDocumentItemCommand(self.items, item, position)
+	self.history.AddAndExecuteCommand(command)
+}
+
 func (self *Document) InsertImage(path string, width, height int) {
 }
 
@@ -83,4 +94,19 @@ func GetItemAtPosition(items list.List, position int) (*list.Element, error) {
 		i++
 	}
 	return nil, fmt.Errorf("Not found item")
+}
+
+func InsertAtPosition(items *list.List, position int, item *list.Element) {
+	i := 0
+	isInserted := false
+	for currentItem := items.Front(); currentItem != nil; currentItem = currentItem.Next() {
+		if i == position {
+			items.InsertBefore(item.Value, currentItem)
+			isInserted = true
+		}
+		i++
+	}
+	if !isInserted {
+		items.PushBack(item.Value)
+	}
 }

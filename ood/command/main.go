@@ -156,18 +156,45 @@ func (c *InsertParagraphCommand) Execute(input string) {
 		fmt.Println("Wrong command")
 		return
 	}
+	position, err := preparePosition(params[0], c.d, true)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	c.d.InsertParagraph(params[1], position)
+}
+
+type ReplaceParagraphCommand struct {
+	d *document.Document
+}
+
+func (c *ReplaceParagraphCommand) Execute(input string) {
+	params := strings.SplitN(input, " ", 2)
+	if len(params) != 2 {
+		fmt.Println("Wrong command")
+		return
+	}
+	position, err := preparePosition(params[0], c.d, false)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	c.d.ReplaceParagraph(params[1], position)
+}
+
+func preparePosition(param string, d *document.Document, canExtend bool) (int, error) {
+
 	var position int
-	if params[0] == "end" {
+	if param == "end" {
 		position = document.END_POSITION
 	} else {
-		i, err := strconv.Atoi(params[0])
-		if err != nil || i < 0 || i > c.d.ItemsCount() {
-			fmt.Println("Bad position")
-			return
+		i, err := strconv.Atoi(param)
+		if err != nil || i < 0 || i > d.ItemsCount() || (!canExtend && i == d.ItemsCount()) {
+			return 0, fmt.Errorf("Bad position")
 		}
 		position = i
 	}
-	c.d.InsertParagraph(params[1], position)
+	return position, nil
 }
 
 func main() {
@@ -187,7 +214,9 @@ func main() {
 	setTitleCommand := &SetTitleCommand{d}
 	menu.AddItem("setTitle", "Changes title. Args: <заголовок документа>", setTitleCommand.Execute)
 	insertParagraphCommand := &InsertParagraphCommand{d}
-	menu.AddItem("insertParagraph", "InsertParagraph <позиция>|end <текст параграфа>", insertParagraphCommand.Execute)
+	menu.AddItem("insertParagraph", "insertParagraph <позиция>|end <текст параграфа>", insertParagraphCommand.Execute)
+	replaceParagraphCommand := &ReplaceParagraphCommand{d}
+	menu.AddItem("replaceText", "replaceText <позиция>|end <текст параграфа>", replaceParagraphCommand.Execute)
 
 	menu.executeCommand("help")
 	menu.Run(bufio.NewReader(os.Stdin))
